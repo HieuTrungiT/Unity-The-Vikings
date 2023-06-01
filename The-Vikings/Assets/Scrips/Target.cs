@@ -9,21 +9,23 @@ namespace Scrips
     {
         [SerializeField] private Transform arm_ThrowingForce;
         [SerializeField] private Transform arm_ThrowAngle;
+        [SerializeField] private GameObject parentAxe;
+        [SerializeField] private GameObject pf_Axe;
+        
 
         private float _mousePressedX;
         private float _mousePressedY;
+        private float _detalForce;
         private Vector2 _posMouse;
 
-        private void Start()
-        {
-        }
+    
 
         void Update()
         {
-            OnTargetToch();
+            OnTargetTouch();
         }
 
-        private void OnTargetToch()
+        private void OnTargetTouch()
         {
             if (Input.touchCount > 0)
             {
@@ -31,21 +33,31 @@ namespace Scrips
                 {
                     _mousePressedX = Input.mousePosition.x;
                     _mousePressedY = Input.mousePosition.y;
-                    // arm_ThrowingForce.localRotation = Quaternion.Euler(0f, 0f, -120f);
                 }
 
                 if (Input.GetTouch(0).phase == TouchPhase.Ended)
                 {
-                    print("Touch has Ended");
+                    pf_Axe.GetComponent<Axe>().SetThrowAxe(100f - ((_detalForce - 30) / (120 - 30)) * 100f);
                 }
 
                 float detalX = Input.mousePosition.x - _mousePressedX + 120f;
                 float detalY = Input.mousePosition.y - _mousePressedY;
                 _posMouse = new Vector2(detalX, detalY);
-                arm_ThrowAngle.position = new Vector2(_posMouse.y * 0.01f, _posMouse.y * 0.01f);
-
-                arm_ThrowingForce.localRotation = Quaternion.Euler(0f, 0f, -Math.Clamp(_posMouse.x, 0f, 120f));
+                
+                ThrowAngleHuman();
+                ThrowingForceHuman();
             }
+        }
+
+        private void ThrowAngleHuman()
+        {
+            arm_ThrowAngle.localPosition = new Vector2(_posMouse.y == 0 ? 0f : _posMouse.y * 0.01f , _posMouse.y == 0 ? 0f : _posMouse.y * 0.01f);
+        }
+        private void ThrowingForceHuman()
+        {
+            _detalForce = Math.Clamp(_posMouse.x, 30f, 120f);
+            arm_ThrowingForce.localRotation = Quaternion.Euler(0f, 0f, -_detalForce);
+
         }
     }
 }
