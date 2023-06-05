@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Scrips
@@ -11,14 +12,17 @@ namespace Scrips
         [SerializeField] private Transform arm_ThrowAngle;
         [SerializeField] private GameObject parentAxe;
         [SerializeField] private GameObject pf_Axe;
-        
+
+        [Header("Animation")]
+        [SerializeField] private Animator animator;
+
 
         private float _mousePressedX;
         private float _mousePressedY;
         private float _detalForce;
         private Vector2 _posMouse;
 
-    
+
 
         void Update()
         {
@@ -37,13 +41,19 @@ namespace Scrips
 
                 if (Input.GetTouch(0).phase == TouchPhase.Ended)
                 {
-                    pf_Axe.GetComponent<Axe>().SetThrowAxe(100f - ((_detalForce - 30) / (120 - 30)) * 100f);
+                    GameObject axeClone = Instantiate(pf_Axe, transform);
+                    axeClone.GetComponent<Axe>().SetThrowAxe(100f - ((_detalForce - 30) / (120 - 30)) * 100f);
+
+                    //pf_Axe.SetActive(false);
+                    //pf_Axe.GetComponent<Axe>().SetThrowAxe(100f - ((_detalForce - 30) / (120 - 30)) * 100f);
+
+                    animator.SetTrigger("IsThrown 2");
                 }
 
                 float detalX = Input.mousePosition.x - _mousePressedX + 120f;
                 float detalY = Input.mousePosition.y - _mousePressedY;
                 _posMouse = new Vector2(detalX, detalY);
-                
+
                 ThrowAngleHuman();
                 ThrowingForceHuman();
             }
@@ -51,7 +61,7 @@ namespace Scrips
 
         private void ThrowAngleHuman()
         {
-            arm_ThrowAngle.localPosition = new Vector2(_posMouse.y == 0 ? 0f : _posMouse.y * 0.01f , _posMouse.y == 0 ? 0f : _posMouse.y * 0.01f);
+            arm_ThrowAngle.localPosition = new Vector2(_posMouse.y == 0 ? 0f : _posMouse.y * 0.01f, _posMouse.y == 0 ? 0f : _posMouse.y * 0.01f);
         }
         private void ThrowingForceHuman()
         {
