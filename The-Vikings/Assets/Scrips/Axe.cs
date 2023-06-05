@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 
+
 namespace Scrips
 {
     public class Axe : MonoBehaviour
@@ -10,14 +11,16 @@ namespace Scrips
         private Vector3 _startPosition;
         private Vector3 _vector_v_x;
         private Vector3 _vector_v_y;
+        private float _t;
         private float _v_x;
         private float _v_y;
         private float _alpha;
-        private float t;
-        public bool isThrowAxe = false;
+        private float _percentagForce;
+        private bool isThrowAxe = false;
 
         public void SetThrowAxe(float percentageForce)
         {
+            _percentagForce = percentageForce;
             if (!isThrowAxe)
             {
                 isThrowAxe = true;
@@ -35,26 +38,24 @@ namespace Scrips
             if (isThrowAxe)
             {
                 FlyAxe();
-                FlyDirectionAxe();
-                t = t + Time.fixedDeltaTime;
+                // FlyDirectionAxe();
+                GetComponentInChildren<RotateAxe>().SetRotate(_percentagForce ,true);
+                _t = _t + Time.fixedDeltaTime;
             }
         }
 
         private void FlyAxe()
         {
-            var x = _v_x * t;
-            var y = _startPosition.y + startSpeed * Mathf.Sin(_alpha * Mathf.Deg2Rad) * t - 0.5f * gravity * t * t;
-            var z = _v_x * t;
+            var x = _v_x * _t;
+            var y = _startPosition.y + startSpeed * Mathf.Sin(_alpha * Mathf.Deg2Rad) * _t - 0.5f * gravity * _t * _t;
+            var z = _v_x * _t;
             transform.position = new Vector3(_startPosition.x + x, y, _startPosition.z + z);
-            
-            // transform.position = _startPosition + _vector_v_x * _v_x * t;
-            // var y = startSpeed * Mathf.Sin(_alpha * Mathf.Deg2Rad) * t - 0.5f * gravity * t * t;
-            // transform.position = new Vector3(transform.position.x, y, transform.position.z);
         }
+        
 
         private void FlyDirectionAxe()
         {
-            _v_y = startSpeed * Mathf.Sin(_alpha * Mathf.Deg2Rad) - gravity * t;
+            _v_y = startSpeed * Mathf.Sin(_alpha * Mathf.Deg2Rad) - gravity * _t;
             var vector_v_0_at_t = _vector_v_x * _v_x + _vector_v_y * _v_y;
             transform.forward = vector_v_0_at_t;
         }
